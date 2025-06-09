@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>principal</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <header class="header">
+        <div class="logo">
+            <img src="images/logo1.png" alt="Logo"> Sistema de Facturación
+        </div>
+        <div class="user-menu">
+            <div class="user-info">
+                <img src="images/user.png" alt="Usuario">
+                <span id="nombresuario" class="nombre-usuario"></span>
+                <span id="tipo-usuario"></span>
+            </div>
+            <!-- BOTON SALIR QUE FUNCIONA -->
+            <a class="btn-salir" href="#">
+                <img src="images/logout.png" alt="Salir">
+                Salir
+            </a>
+        </div>
+    </header>
+
+    <main class="main">
+        <nav class="nav">
+            <ul>
+                <!-- VENDEDOR -->
+                <li><a id="navegando" href="javaScript:..."> <svg class="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"></svg>Facturacion</a></li>
+                <li><a id="navegando" href="javaScript:....."> <svg class="img" src="iconos/bandeja-de-entrada.png"></svg>Clientes</a> </li>
+                <li><a id="navegando" href="javaScript:....."> <svg class="img" src="iconos/bandeja-de-salida.png"></svg>Facturas</a> </li>
+                <!-- JEVE DE VENTAS -->
+                <li><a id="navegando" href="javaScript:......"> <svg class="img" src="iconos/borradores.png"></svg>Categorias</a> </li>
+                <li><a id="navegando" href="javaScript:......"> <svg class="img" src="iconos/borradores.png"></svg>Productos</a> </li>
+                <!-- ADMINISTRADOR -->
+                <li><a id="navegando" href="javaScript:......"> <svg class="img" src="iconos/gestionar-cuentas.png"></svg>Gestionar Usuarios</a> </li>
+                <li><a id="navegando" href="javaScript:......"> <svg class="img" src="iconos/revisar-correos.png"></svg>Gestionar Vendedores</a> </li>
+            </ul>
+        </nav>
+
+        <div id="contenidoVacio">
+            <!-- esto se mostrara solo al comienzo, liuego se borrara-->
+            <h2>Bienvenido al Sistema de Facturación</h2>
+
+        </div>
+    </main>
+
+        <!-- Modales -->
+        <div id="modal-container"></div>
+
+        <script src="js/principal.js"></script>
+</body>
+</html>
