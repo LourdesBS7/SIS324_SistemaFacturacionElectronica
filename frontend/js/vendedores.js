@@ -2,7 +2,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     // Cerrar modal al hacer clic en "x"
     document.querySelectorAll('.close').forEach(close => {
-        close.addEventListener('click', cerrarModalCliente);
+        close.addEventListener('click', cerrarModalVendedor);
     });
 
     // Cerrar modal al hacer clic fuera
@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (modal) {
         modal.addEventListener('click', (e) => {
             if (e.target === modal) {
-                cerrarModalCliente();
+                cerrarModalVendedor();
             }
         });
     }
@@ -18,22 +18,21 @@ document.addEventListener('DOMContentLoaded', () => {
     // Cerrar modal al presionar ESC
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') {
-            cerrarModalCliente();
+            cerrarModalVendedor();
         }
     });
 });
 
 /* -------------------------------------------------------------------------- */
-// clientes.js
+// vendedores.js
 // Constantes
-const ENDPOINTCLI = '/api/clientes';
-const CONTENEDORCLI = 'contenidoVacio';
+const ENDPOINTVEN = '/api/vendedores';
+const CONTENEDORVEN = 'contenidoVacio';
 
 // Función para cargar el formulario
-async function cargarFormularioCliente() {
+async function cargarFormularioVendedor() {
     try {
-        // Asegurarse de que la ruta sea correcta
-        const response = await fetch('../pages/form_create_clientes.html');
+        const response = await fetch('/pages/form_create_vendedores.html');
         if (!response.ok) {
             throw new Error('Error al cargar el formulario');
         }
@@ -54,133 +53,137 @@ async function cargarFormularioCliente() {
         }
     } catch (error) {
         console.error('Error al cargar el formulario:', error);
-        mostrarErrorCliente('Error al cargar el formulario');
+        mostrarErrorVendedor('Error al cargar el formulario');
         throw error;
     }
 }
 
-// Funciones principales
-async function cargarClientes() {
+// Función principal para cargar vendedores
+async function cargarVendedores() {
     try {
-        const response = await fetch(ENDPOINTCLI);
+        const response = await fetch(ENDPOINTVEN);
         const data = await response.json();
-        mostrarClientes(data);
+        mostrarVendedores(data);
     } catch (error) {
-        mostrarErrorCliente('Error al cargar clientes');
+        mostrarErrorVendedor('Error al cargar vendedores');
     }
 }
-/*  ...........................*/
-async function cargarDatosCliente(id) {
+
+// Función para cargar datos de vendedor
+async function cargarDatosVendedor(id) {
     try {
-        const response = await fetch(`${ENDPOINTCLI}/${id}`);
+        const response = await fetch(`${ENDPOINTVEN}/${id}`);
         if (!response.ok) {
-            throw new Error('Error al obtener datos del cliente');
+            throw new Error('Error al obtener datos del vendedor');
         }
         
-        const cliente = await response.json();
+        const vendedor = await response.json();
         
         // Llenar el formulario
-        const form = document.getElementById('clienteFormNew');
+        const form = document.getElementById('vendedorFormNew');
         if (!form) {
             throw new Error('Formulario no encontrado');
         }
         
-        form.nombre.value = cliente.nombre;
-        form.NIT.value = cliente.NIT;
-        form.direccion.value = cliente.direccion;
-        form.telefono.value = cliente.telefono;
-        form.email.value = cliente.email;
+        form.nombre.value = vendedor.nombre;
+        form.direccion.value = vendedor.direccion;
+        form.telefono.value = vendedor.telefono;
+        form.email.value = vendedor.email;
+        form.codVendedor.value = vendedor.codVendedor;
         
         // Actualizar el título del modal
         const tituloModal = document.getElementById('titulo-modal');
         if (tituloModal) {
-            tituloModal.textContent = 'Editar Cliente';
+            tituloModal.textContent = 'Editar Vendedor';
         }
         
-        // Establecer el ID del cliente en el formulario
-        form.dataset.clienteId = cliente.idCliente;
+        // Establecer el ID del vendedor en el formulario
+        form.dataset.vendedorId = vendedor.idVendedor;
         
     } catch (error) {
-        console.error('Error al cargar datos del cliente:', error);
-        mostrarErrorCliente('Error al cargar datos del cliente');
+        console.error('Error al cargar datos del vendedor:', error);
+        mostrarErrorVendedor('Error al cargar datos del vendedor');
         throw error;
     }
 }
 
-
-function mostrarClientes(clientes) {
-    const contenedor = document.getElementById(CONTENEDORCLI);
+// Función para mostrar vendedores
+function mostrarVendedores(vendedores) {    
+    const contenedor = document.getElementById(CONTENEDORVEN);
     contenedor.innerHTML = `
     <div class="cabezeraVacio">
-        <span><img src="images/clientes.png" alt="Clientes"><h2>GestionarClientes</h2></span>
-        <button class="btn" onclick="abrirModalCliente()"><img src="images/mas.png" alt="Clientes">Nuevo Cliente</button>
+        <span><img src="images/gestionarVendedores.png" alt="Vendedores"><h2>Gestionar Vendedores</h2></span>
+        <button class="btn" onclick="abrirModalVendedor()"><img src="images/mas.png" alt="Vendedores">Nuevo Vendedor</button>
     </div>
         <div class="table-container">
             <table class="table">
                 <thead>
                     <tr>
                         <th>Nombre</th>
-                        <th>NIT</th>
                         <th>Dirección</th>
                         <th>Teléfono</th>
                         <th>Email</th>
+                        <th>Código</th>
                         <th>Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
-                    ${clientes.map(cliente => filaCliente(cliente)).join('')}
+                    ${vendedores.map(vendedor => filaVendedor(vendedor)).join('')}
                 </tbody>
             </table>
         </div>
     `;
 }
 
-function filaCliente(cliente) {
+// Función para crear fila de vendedor
+function filaVendedor(vendedor) {
     return `
         <tr>
-            <td>${cliente.nombre || 'N/A'}</td>
-            <td>${cliente.NIT || 'N/A'}</td>
-            <td>${cliente.direccion || 'N/A'}</td>
-            <td>${cliente.telefono || 'N/A'}</td>
-            <td>${cliente.email || 'N/A'}</td>
+            <td>${vendedor.nombre || 'N/A'}</td>
+            <td>${vendedor.direccion || 'N/A'}</td>
+            <td>${vendedor.telefono || 'N/A'}</td>
+            <td>${vendedor.email || 'N/A'}</td>
+            <td>${vendedor.codVendedor || 'N/A'}</td>
             <td>
-                <button class="btn" onclick="abrirModalEditarCliente(${cliente.idCliente})">Editar</button>
-                <button class="btn-eliminar" onclick="abrirModalEliminarCliente(${cliente.idCliente})">Eliminar</button>
+                <button class="btn" onclick="abrirModalEditarVendedor(${vendedor.idVendedor})">Editar</button>
+                <button class="btn-eliminar" onclick="abrirModalEliminarVendedor(${vendedor.idVendedor})">Eliminar</button>
             </td>
         </tr>
     `;
 }
 
-function abrirModalCliente() {
+// Función para abrir modal
+function abrirModalVendedor() {
     try {
         // Limpiar el formulario
-        const form = document.getElementById('clienteFormNew');
+        const form = document.getElementById('vendedorFormNew');
         if (form) {
             form.reset();
-            form.dataset.clienteId = '';
+            form.dataset.vendedorId = '';
         }
 
         // Actualizar el título del modal
         const tituloModal = document.getElementById('titulo-modal');
         if (tituloModal) {
-            tituloModal.textContent = 'Nuevo Cliente';
+            tituloModal.textContent = 'Nuevo Vendedor';
         }
 
         // Cargar el formulario
-        cargarFormularioCliente();
+        cargarFormularioVendedor();
     } catch (error) {
         console.error('Error al abrir modal:', error);
-        mostrarErrorCliente('Error al abrir el modal');
+        mostrarErrorVendedor('Error al abrir el modal');
     }
 }
 
-function abrirModalEditarCliente(id) {
+// Función para abrir modal de edición
+function abrirModalEditarVendedor(id) {
     try {
         // Limpiar el formulario y establecer el ID
-        const form = document.getElementById('clienteFormNew');
+        const form = document.getElementById('vendedorFormNew');
         if (form) {
             form.reset();
-            form.dataset.clienteId = id;
+            form.dataset.vendedorId = id;
         }
 
         // Actualizar el título del modal
@@ -190,21 +193,21 @@ function abrirModalEditarCliente(id) {
         }
 
         // Cargar el formulario
-        cargarFormularioCliente()
-            .then(() => cargarDatosCliente(id))
+        cargarFormularioVendedor()
+            .then(() => cargarDatosVendedor(id))
             .catch(error => {
                 console.error('Error:', error);
-                mostrarErrorCliente('Error al cargar el formulario');
-                cerrarModalCliente();
+                mostrarErrorVendedor('Error al cargar el formulario');
+                cerrarModalVendedor();
             });
     } catch (error) {
         console.error('Error al abrir modal de edición:', error);
-        mostrarErrorCliente('Error al abrir el modal de edición');
+        mostrarErrorVendedor('Error al abrir el modal de edición');
     }
 }
 
-
-function abrirModalEliminarCliente(id) {
+// Función para abrir modal de eliminación
+function abrirModalEliminarVendedor(id) {
     try {
         // Actualizar el título del modal
         const tituloModal = document.getElementById('titulo-modal');
@@ -216,10 +219,10 @@ function abrirModalEliminarCliente(id) {
         const contenidoModal = document.getElementById('contenido-modal');
         if (contenidoModal) {
             contenidoModal.innerHTML = `
-                <p>¿Está seguro que desea eliminar este cliente?</p>
+                <p>¿Está seguro que desea eliminar este vendedor?</p>
                 <div class="botones-eliminar-modal">
-                    <button id="btn-confirmar-eliminar" class="btn btn-primary" onclick="eliminarCliente(${id})">Aceptar</button>
-                    <button class="btn btn-secondary" onclick="cerrarModalCliente()">Cancelar</button>
+                    <button id="btn-confirmar-eliminar" class="btn btn-primary" onclick="eliminarVendedor(${id})">Aceptar</button>
+                    <button class="btn btn-secondary" onclick="cerrarModalVendedor()">Cancelar</button>
                 </div>
             `;
         }
@@ -231,11 +234,12 @@ function abrirModalEliminarCliente(id) {
         }
     } catch (error) {
         console.error('Error al abrir modal de eliminación:', error);
-        mostrarErrorCliente('Error al abrir el modal de eliminación');
+        mostrarErrorVendedor('Error al abrir el modal de eliminación');
     }
 }
 
-function cerrarModalCliente() {
+// Función para cerrar modal
+function cerrarModalVendedor() {
     const modal = document.getElementById('modal');
     if (modal) {
         modal.style.display = 'none';
@@ -248,9 +252,10 @@ function cerrarModalCliente() {
     }
 }
 
-async function eliminarCliente(id) {
+// Función para eliminar vendedor
+async function eliminarVendedor(id) {
     try {
-        const response = await fetch(`${ENDPOINTCLI}/${id}`, {
+        const response = await fetch(`${ENDPOINTVEN}/${id}`, {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json'
@@ -262,51 +267,52 @@ async function eliminarCliente(id) {
             const modalContent = document.getElementById('contenido-modal');
             const mensajeDiv = document.createElement('div');
             mensajeDiv.className = 'modal-message success-message';
-            mensajeDiv.textContent = 'Cliente eliminado exitosamente';
+            mensajeDiv.textContent = 'Vendedor eliminado exitosamente';
             modalContent.appendChild(mensajeDiv);
             
             // Esperar 2 segundos antes de cerrar
             setTimeout(() => {
-                cargarClientes();
-                cerrarModalCliente();
+                window.cargarVendedores();
+                cerrarModalVendedor();
             }, 2000);
         } else {
-            throw new Error('Error al eliminar el cliente');
+            throw new Error('Error al eliminar el vendedor');
         }
     } catch (error) {
-        mostrarError(error.message);
+        mostrarErrorVendedor(error.message);
         console.error('Error:', error);
     }
 }
 
-function guardarCliente(event) {
+// Función para guardar vendedor
+function guardarVendedor(event) {
     event.preventDefault();
     
     try {
-        const form = document.getElementById('clienteFormNew');
-        const clienteId = form.dataset.clienteId;
+        const form = document.getElementById('vendedorFormNew');
+        const vendedorId = form.dataset.vendedorId;
         
-        const cliente = {
+        const vendedor = {
             nombre: document.getElementById('nombre').value,
-            NIT: document.getElementById('NIT').value,
             direccion: document.getElementById('direccion').value,
             telefono: document.getElementById('telefono').value,
-            email: document.getElementById('email').value
+            email: document.getElementById('email').value,
+            codVendedor: document.getElementById('codVendedor').value
         };
 
-        const url = clienteId ? `${ENDPOINTCLI}/${clienteId}` : ENDPOINTCLI;
-        const method = clienteId ? 'PUT' : 'POST';
+        const url = vendedorId ? `${ENDPOINTVEN}/${vendedorId}` : ENDPOINTVEN;
+        const method = vendedorId ? 'PUT' : 'POST';
         
         fetch(url, {
             method: method,
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify(cliente)
+            body: JSON.stringify(vendedor)
         })
         .then(response => {
             if (!response.ok) {
-                throw new Error('Error al guardar el cliente');
+                throw new Error('Error al guardar el vendedor');
             }
             return response.json();
         })
@@ -315,27 +321,28 @@ function guardarCliente(event) {
             const modalContent = document.getElementById('contenido-modal');
             const mensajeDiv = document.createElement('div');
             mensajeDiv.className = 'modal-message success-message';
-            mensajeDiv.textContent = 'Cliente guardado exitosamente';
+            mensajeDiv.textContent = 'Vendedor guardado exitosamente';
             modalContent.appendChild(mensajeDiv);
             
             // Esperar 2 segundos antes de cerrar
             setTimeout(() => {
-                cerrarModalCliente();
-                cargarClientes();
+                cerrarModalVendedor();
+                window.cargarVendedores();
             }, 2000);
         })
         .catch(error => {
             console.error('Error:', error);
-            mostrarErrorCliente('Error al guardar el cliente');
+            mostrarErrorVendedor('Error al guardar el vendedor');
         });
     } catch (error) {
         console.error('Error al procesar el formulario:', error);
-        mostrarErrorCliente('Error al procesar el formulario');
+        mostrarErrorVendedor('Error al procesar el formulario');
     }
 }
 
-function mostrarMensajeCliente(mensaje) {
-    const contenedor = document.getElementById(CONTENEDORCLI);
+// Función para mostrar mensaje
+function mostrarMensajeVendedor(mensaje) {
+    const contenedor = document.getElementById(CONTENEDORVEN);
     const mensajeDiv = document.createElement('div');
     mensajeDiv.className = 'success-message';
     mensajeDiv.textContent = mensaje;
@@ -344,8 +351,9 @@ function mostrarMensajeCliente(mensaje) {
     setTimeout(() => mensajeDiv.remove(), 5000);
 }
 
-function mostrarErrorCliente(mensaje) {
-    const contenedor = document.getElementById(CONTENEDORCLI);
+// Función para mostrar error
+function mostrarErrorVendedor(mensaje) {
+    const contenedor = document.getElementById(CONTENEDORVEN);
     const mensajeDiv = document.createElement('div');
     mensajeDiv.className = 'error-message';
     mensajeDiv.textContent = mensaje;
@@ -354,4 +362,7 @@ function mostrarErrorCliente(mensaje) {
     setTimeout(() => mensajeDiv.remove(), 3000);
 }
 
-window.cargarClientes = cargarClientes;
+// Llamar a la función para cargar el módulo de vendedores
+// No llamamos aquí, ya que se llama desde principal.js
+// window.cargarVendedores();
+window.cargarVendedores = cargarVendedores;

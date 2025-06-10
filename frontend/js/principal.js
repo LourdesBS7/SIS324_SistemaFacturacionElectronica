@@ -10,8 +10,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     const userNameElement = document.querySelector('.nombre-usuario');
     userNameElement.textContent = user.nombre || 'Usuario';
     
-    const tipoUsuarioElement = document.querySelector('#tipo-usuario');
-    tipoUsuarioElement.textContent = user.tipo || 'Usuario';
+    const rolUsuarioElement = document.querySelector('#rol-usuario');
+    rolUsuarioElement.textContent = user.rol || 'Usuario';
 
     // Manejar botón de cerrar sesión
     const logoutButton = document.querySelector('.btn-salir');
@@ -30,6 +30,9 @@ document.addEventListener('DOMContentLoaded', async () => {
             switch (target) {
                 case '#clientes':
                     cargarClientes();
+                    break;
+                case '#vendedores':
+                    cargarVendedores();
                     break;
                 // Agregar más casos para otros módulos
             }
