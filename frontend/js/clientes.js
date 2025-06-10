@@ -112,7 +112,7 @@ function mostrarClientes(clientes) {
     contenedor.innerHTML = `
     <div class="cabezeraVacio">
         <span><img src="images/clientes.png" alt="Clientes"><h2>GestionarClientes</h2></span>
-        <button class="btn" onclick="abrirModal()">Nuevo Cliente</button>
+        <button class="btn" onclick="abrirModal()"><img src="images/mas.png" alt="Clientes">Nuevo Cliente</button>
     </div>
         <div class="table-container">
             <table class="table">
