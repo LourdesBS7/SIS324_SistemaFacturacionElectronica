@@ -2,32 +2,27 @@
 document.addEventListener('DOMContentLoaded', () => {
     // Cerrar modal al hacer clic en "x"
     document.querySelectorAll('.close').forEach(close => {
-        close.addEventListener('click', (e) => {
-            const modal = e.target.closest('.modal');
-            if (modal) {
-                modal.style.display = 'none';
-            }
-        });
+        close.addEventListener('click', cerrarModal);
     });
 
     // Cerrar modal al hacer clic fuera
-    document.querySelectorAll('.modal').forEach(modal => {
+    const modal = document.getElementById('modal');
+    if (modal) {
         modal.addEventListener('click', (e) => {
             if (e.target === modal) {
-                modal.style.display = 'none';
+                cerrarModal();
             }
         });
-    });
+    }
 
     // Cerrar modal al presionar ESC
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') {
-            document.querySelectorAll('.modal').forEach(modal => {
-                modal.style.display = 'none';
-            });
+            cerrarModal();
         }
     });
 });
+
 /* -------------------------------------------------------------------------- */
 // clientes.js
 // Constantes
@@ -35,21 +30,27 @@ const ENDPOINT = '/api/clientes';
 const CONTENEDOR = 'contenidoVacio';
 
 // Función para cargar el formulario
-async function cargarFormularioClientes() {
+async function cargarFormulario() {
     try {
-        const response = await fetch('pages/form_clientes.html');
+        const response = await fetch('pages/form_create_clientes.html');
         if (!response.ok) {
             throw new Error('Error al cargar el formulario');
         }
         
         const html = await response.text();
-        const modalContent = document.getElementById('clientesModalContent');
+        const contenidoModal = document.getElementById('contenido-modal');
         
-        if (!modalContent) {
+        if (!contenidoModal) {
             throw new Error('No se encontró el contenedor para el formulario');
         }
         
-        modalContent.innerHTML = html;
+        contenidoModal.innerHTML = html;
+        
+        // Mostrar el modal
+        const modal = document.getElementById('modal');
+        if (modal) {
+            modal.style.display = 'block';
+        }
     } catch (error) {
         console.error('Error al cargar el formulario:', error);
         mostrarError('Error al cargar el formulario');
@@ -67,12 +68,52 @@ async function cargarClientes() {
         mostrarError('Error al cargar clientes');
     }
 }
+/*  ...........................*/
+async function cargarDatosCliente(id) {
+    try {
+        const response = await fetch(`${ENDPOINT}/${id}`);
+        if (!response.ok) {
+            throw new Error('Error al obtener datos del cliente');
+        }
+        
+        const cliente = await response.json();
+        
+        // Llenar el formulario
+        const form = document.getElementById('clienteFormNew');
+        if (!form) {
+            throw new Error('Formulario no encontrado');
+        }
+        
+        form.nombre.value = cliente.nombre;
+        form.NIT.value = cliente.NIT;
+        form.direccion.value = cliente.direccion;
+        form.telefono.value = cliente.telefono;
+        form.email.value = cliente.email;
+        
+        // Actualizar el título del modal
+        const tituloModal = document.getElementById('titulo-modal');
+        if (tituloModal) {
+            tituloModal.textContent = 'Editar Cliente';
+        }
+        
+        // Establecer el ID del cliente en el formulario
+        form.dataset.clienteId = cliente.idCliente;
+        
+    } catch (error) {
+        console.error('Error al cargar datos del cliente:', error);
+        mostrarError('Error al cargar datos del cliente');
+        throw error;
+    }
+}
+
 
 function mostrarClientes(clientes) {
     const contenedor = document.getElementById(CONTENEDOR);
     contenedor.innerHTML = `
-        <h2>Clientes</h2>
-        <button class="btn" onclick="abrirModal('nuevo')">Nuevo Cliente</button>
+    <div class="cabezeraVacio">
+        <span><img src="images/clientes.png" alt="Clientes"><h2>GestionarClientes</h2></span>
+        <button class="btn" onclick="abrirModal()">Nuevo Cliente</button>
+    </div>
         <div class="table-container">
             <table class="table">
                 <thead>
@@ -103,120 +144,131 @@ function filaCliente(cliente) {
             <td>${cliente.email || 'N/A'}</td>
             <td>
                 <button class="btn" onclick="abrirModalEditar(${cliente.idCliente})">Editar</button>
-                <button class="btn-eliminar-modal" onclick="abrirModalEliminar(${cliente.idCliente})">Eliminar</button>
+                <button class="btn-eliminar" onclick="abrirModalEliminar(${cliente.idCliente})">Eliminar</button>
             </td>
         </tr>
     `;
 }
 
-// Modificar abrirModal para asegurar que se limpia el ID
-async function abrirModal(accion) {
+function abrirModal() {
     try {
-        // Cargar el formulario si no existe
-        if (!document.getElementById('clienteForm')) {
-            await cargarFormularioClientes();
+        // Limpiar el formulario
+        const form = document.getElementById('clienteFormNew');
+        if (form) {
+            form.reset();
+            form.dataset.clienteId = '';
         }
-        
-        // Esperar un momento para asegurar que los elementos estén disponibles
-        await new Promise(resolve => setTimeout(resolve, 100));
-        
-        const modal = document.getElementById('modal');
-        const titulo = document.getElementById('titulo-modal');
-        const contenido = document.getElementById('contenido-modal');
-        
-        if (!modal || !titulo || !contenido) {
-            throw new Error('Elementos del modal no encontrados');
+
+        // Actualizar el título del modal
+        const tituloModal = document.getElementById('titulo-modal');
+        if (tituloModal) {
+            tituloModal.textContent = 'Nuevo Cliente';
         }
-        
-        // Actualizar título según la acción
-        titulo.textContent = accion === 'nuevo' ? 'Nuevo Cliente' : 'Editar Cliente';
-        
-        // Limpiar el contenido
-        contenido.innerHTML = document.getElementById('clientesModalContent').innerHTML;
-        
-        // Obtener el formulario
-        const form = contenido.querySelector('#clienteForm');
-        
-        if (!form) {
-            throw new Error('Formulario no encontrado');
-        }
-        
-        // Resetear el formulario y limpiar el ID
-        form.reset();
-        form.dataset.clienteId = ''; // Asegurarse de limpiar el ID
-        
-        // Mostrar el modal
-        modal.style.display = 'block';
+
+        // Cargar el formulario
+        cargarFormulario();
     } catch (error) {
         console.error('Error al abrir modal:', error);
         mostrarError('Error al abrir el modal');
     }
 }
-async function abrirModalEditar(id) {
+
+function abrirModalEditar(id) {
     try {
-        // Cargar el formulario si no existe
-        if (!document.getElementById('clienteForm')) {
-            await cargarFormularioClientes();
+        // Limpiar el formulario y establecer el ID
+        const form = document.getElementById('clienteFormNew');
+        if (form) {
+            form.reset();
+            form.dataset.clienteId = id;
         }
-        
-        // Esperar un momento para asegurar que los elementos estén disponibles
-        await new Promise(resolve => setTimeout(resolve, 100));
-        
-        const modal = document.getElementById('modal');
-        const titulo = document.getElementById('titulo-modal');
-        const contenido = document.getElementById('contenido-modal');
-        
-        if (!modal || !titulo || !contenido) {
-            throw new Error('Elementos del modal no encontrados');
+
+        // Actualizar el título del modal
+        const tituloModal = document.getElementById('titulo-modal');
+        if (tituloModal) {
+            tituloModal.textContent = 'Cargando datos...';
         }
-        
-        // Actualizar título
-        titulo.textContent = 'Editar Cliente';
-        
-        // Limpiar el contenido
-        contenido.innerHTML = document.getElementById('clientesModalContent').innerHTML;
-        
-        // Obtener el formulario
-        const form = contenido.querySelector('#clienteForm');
-        
-        if (!form) {
-            throw new Error('Formulario no encontrado');
-        }
-        
-        // Cargar datos del cliente antes de mostrar el modal
-        await cargarDatosCliente(id);
-        
-        // Mostrar el modal
-        modal.style.display = 'block';
+
+        // Cargar el formulario
+        cargarFormulario()
+            .then(() => cargarDatosCliente(id))
+            .catch(error => {
+                console.error('Error:', error);
+                mostrarError('Error al cargar el formulario');
+                cerrarModal();
+            });
     } catch (error) {
         console.error('Error al abrir modal de edición:', error);
         mostrarError('Error al abrir el modal de edición');
     }
 }
 
+
 function abrirModalEliminar(id) {
-    const modal = document.getElementById('modal-eliminar');
-    const contenido = modal.querySelector('.contenido-modal-eliminar');
-    
-    contenido.textContent = `¿Está seguro que desea eliminar este cliente?`;
-    
-    // Agregar evento al botón de eliminar
-    const btnEliminar = modal.querySelector('#btn-confirmar-eliminar');
-    btnEliminar.onclick = () => eliminarCliente(id);
-    
-    // Mostrar el modal
-    modal.style.display = 'block';
+    try {
+        // Actualizar el título del modal
+        const tituloModal = document.getElementById('titulo-modal');
+        if (tituloModal) {
+            tituloModal.textContent = 'Confirmar eliminación';
+        }
+
+        // Cargar el modal de confirmación
+        const contenidoModal = document.getElementById('contenido-modal');
+        if (contenidoModal) {
+            contenidoModal.innerHTML = `
+                <p>¿Está seguro que desea eliminar este cliente?</p>
+                <div class="botones-eliminar-modal">
+                    <button id="btn-confirmar-eliminar" class="btn btn-primary" onclick="eliminarCliente(${id})">Aceptar</button>
+                    <button class="btn btn-secondary" onclick="cerrarModal()">Cancelar</button>
+                </div>
+            `;
+        }
+
+        // Mostrar el modal
+        const modal = document.getElementById('modal');
+        if (modal) {
+            modal.style.display = 'block';
+        }
+    } catch (error) {
+        console.error('Error al abrir modal de eliminación:', error);
+        mostrarError('Error al abrir el modal de eliminación');
+    }
+}
+
+function cerrarModal() {
+    const modal = document.getElementById('modal');
+    if (modal) {
+        modal.style.display = 'none';
+        
+        // Limpiar el contenido del modal
+        const contenidoModal = document.getElementById('contenido-modal');
+        if (contenidoModal) {
+            contenidoModal.innerHTML = '';
+        }
+    }
 }
 
 async function eliminarCliente(id) {
     try {
         const response = await fetch(`${ENDPOINT}/${id}`, {
-            method: 'DELETE'
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            }
         });
         
         if (response.ok) {
-            mostrarMensaje('Cliente eliminado exitosamente');
-            cargarClientes();
+            // Mostrar mensaje dentro del modal
+            const modalContent = document.getElementById('contenido-modal');
+            const mensajeDiv = document.createElement('div');
+            mensajeDiv.className = 'modal-message success-message';
+            mensajeDiv.textContent = 'Cliente eliminado exitosamente';
+            modalContent.appendChild(mensajeDiv);
+            
+            // Esperar 2 segundos antes de cerrar
+            setTimeout(() => {
+                cargarClientes();
+                cerrarModal();
+            }, 2000);
         } else {
             throw new Error('Error al eliminar el cliente');
         }
@@ -226,100 +278,58 @@ async function eliminarCliente(id) {
     }
 }
 
-async function cargarDatosCliente(id) {
-    try {
-        const response = await fetch(`${ENDPOINT}/${id}`);
-        if (!response.ok) {
-            throw new Error('Error al obtener datos del cliente');
-        }
-        
-        const cliente = await response.json();
-        
-        // Llenar el formulario
-        const form = document.getElementById('clienteForm');
-        if (!form) {
-            throw new Error('Formulario no encontrado');
-        }
-        
-        form.nombre.value = cliente.nombre;
-        form.NIT.value = cliente.NIT;
-        form.direccion.value = cliente.direccion;
-        form.telefono.value = cliente.telefono;
-        form.email.value = cliente.email;
-        
-        // Establecer el ID del cliente en el formulario
-        form.dataset.clienteId = cliente.idCliente;
-        
-    } catch (error) {
-        console.error('Error al cargar datos del cliente:', error);
-        mostrarError('Error al cargar datos del cliente');
-        throw error;
-    }
-}
-
-async function guardarCliente(event) {
+function guardarCliente(event) {
     event.preventDefault();
     
     try {
-        const form = event.target;
-        const cliente = {
-            nombre: form.nombre.value,
-            NIT: form.NIT.value,
-            direccion: form.direccion.value,
-            telefono: form.telefono.value,
-            email: form.email.value
-        };
-        
-        // Verificar si es nuevo o edición
+        const form = document.getElementById('clienteFormNew');
         const clienteId = form.dataset.clienteId;
         
-        if (clienteId) {
-            // Es una edición
-            const response = await fetch(`${ENDPOINT}/${clienteId}`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(cliente)
-            });
-            
-            if (response.ok) {
-                mostrarMensaje('Cliente actualizado exitosamente');
-            } else {
-                throw new Error('Error al actualizar el cliente');
-            }
-        } else {
-            // Es un nuevo cliente
-            const response = await fetch(ENDPOINT, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(cliente)
-            });
-            
-            if (response.ok) {
-                mostrarMensaje('Cliente creado exitosamente');
-            } else {
-                throw new Error('Error al crear el cliente');
-            }
-        }
-        
-        // Actualizar la lista y cerrar modal
-        cargarClientes();
-        cerrarModal('modal');
-    } catch (error) {
-        mostrarError(error.message);
-        console.error('Error:', error);
-    }
-    
-    return false;
-}
+        const cliente = {
+            nombre: document.getElementById('nombre').value,
+            NIT: document.getElementById('NIT').value,
+            direccion: document.getElementById('direccion').value,
+            telefono: document.getElementById('telefono').value,
+            email: document.getElementById('email').value
+        };
 
-function cerrarModal(id) {
-    const modal = document.getElementById(id);
-    if (modal) {
-        modal.style.display = 'none';
+        const url = clienteId ? `${ENDPOINT}/${clienteId}` : ENDPOINT;
+        const method = clienteId ? 'PUT' : 'POST';
+        
+        fetch(url, {
+            method: method,
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(cliente)
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Error al guardar el cliente');
+            }
+            return response.json();
+        })
+        .then(() => {
+            // Mostrar mensaje dentro del modal
+            const modalContent = document.getElementById('contenido-modal');
+            const mensajeDiv = document.createElement('div');
+            mensajeDiv.className = 'modal-message success-message';
+            mensajeDiv.textContent = 'Cliente guardado exitosamente';
+            modalContent.appendChild(mensajeDiv);
+            
+            // Esperar 2 segundos antes de cerrar
+            setTimeout(() => {
+                cerrarModal();
+                cargarClientes();
+            }, 2000);
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            mostrarError('Error al guardar el cliente');
+        });
+    } catch (error) {
+        console.error('Error al procesar el formulario:', error);
+        mostrarError('Error al procesar el formulario');
     }
 }
 
@@ -330,7 +340,7 @@ function mostrarMensaje(mensaje) {
     mensajeDiv.textContent = mensaje;
     contenedor.insertBefore(mensajeDiv, contenedor.firstChild);
     
-    setTimeout(() => mensajeDiv.remove(), 3000);
+    setTimeout(() => mensajeDiv.remove(), 5000);
 }
 
 function mostrarError(mensaje) {

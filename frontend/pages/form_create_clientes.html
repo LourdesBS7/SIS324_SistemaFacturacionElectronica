@@ -1,6 +1,7 @@
-<!-- form_clientes.html -->
+<!-- form_clientes.html  ESTO ES EL FORMUALRIO PARA CREAR UN CLIENTE NUEVO-->
+<!-- <link rel="stylesheet" href="../css/style.css"> -->
 <div id="clientesModalContent">
-    <form id="clienteForm" onsubmit="return guardarCliente(event)" data-cliente-id="">
+    <form id="clienteFormNew" onsubmit="return guardarCliente(event)" data-cliente-id="">
         <!-- Campos del formulario -->
         <div class="form-group">
             <label for="nombre">Nombre:</label>
@@ -16,11 +17,11 @@
         </div>
         <div class="form-group">
             <label for="telefono">Teléfono:</label>
-            <input type="tel" id="telefono" name="telefono" required>
+            <input type="tel" id="telefono" name="telefono">
         </div>
         <div class="form-group">
             <label for="email">Email:</label>
-            <input type="email" id="email" name="email">
+            <input type="email" id="email" name="email" >
         </div>
         <div class="form-group">
             <button type="submit" class="btn btn-primary">Guardar</button>
