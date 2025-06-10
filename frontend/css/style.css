@@ -77,6 +77,9 @@ body {
 }
 
 /* Navigation */
+.nav-link{
+    gap: 10px;
+}
 .nav {
     width: 250px;
     background-color: #0F2E1D;
@@ -86,6 +89,9 @@ body {
 .nav ul {
     list-style: none;
     padding: 1rem;
+}
+.nav img{
+    width: 25px;
 }
 
 .nav li {
