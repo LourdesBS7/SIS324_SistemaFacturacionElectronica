@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Cerrar modal al hacer clic fuera
-    const modal = document.getElementById('modal');
+    const modal = document.getElementById('modal-clientes-vendedores');
     if (modal) {
         modal.addEventListener('click', (e) => {
             if (e.target === modal) {
@@ -38,7 +38,7 @@ async function cargarFormularioVendedor() {
         }
         
         const html = await response.text();
-        const contenidoModal = document.getElementById('contenido-modal');
+        const contenidoModal = document.getElementById('contenido-modal-lu');
         
         if (!contenidoModal) {
             throw new Error('No se encontró el contenedor para el formulario');
@@ -47,7 +47,7 @@ async function cargarFormularioVendedor() {
         contenidoModal.innerHTML = html;
         
         // Mostrar el modal
-        const modal = document.getElementById('modal');
+        const modal = document.getElementById('modal-lu');
         if (modal) {
             modal.style.display = 'block';
         }
@@ -92,7 +92,7 @@ async function cargarDatosVendedor(id) {
         form.codVendedor.value = vendedor.codVendedor;
         
         // Actualizar el título del modal
-        const tituloModal = document.getElementById('titulo-modal');
+        const tituloModal = document.getElementById('titulo-modal-lu');
         if (tituloModal) {
             tituloModal.textContent = 'Editar Vendedor';
         }
@@ -163,7 +163,7 @@ function abrirModalVendedor() {
         }
 
         // Actualizar el título del modal
-        const tituloModal = document.getElementById('titulo-modal');
+        const tituloModal = document.getElementById('titulo-modal-lu');
         if (tituloModal) {
             tituloModal.textContent = 'Nuevo Vendedor';
         }
@@ -187,7 +187,7 @@ function abrirModalEditarVendedor(id) {
         }
 
         // Actualizar el título del modal
-        const tituloModal = document.getElementById('titulo-modal');
+        const tituloModal = document.getElementById('titulo-modal-lu');
         if (tituloModal) {
             tituloModal.textContent = 'Cargando datos...';
         }
@@ -210,13 +210,13 @@ function abrirModalEditarVendedor(id) {
 function abrirModalEliminarVendedor(id) {
     try {
         // Actualizar el título del modal
-        const tituloModal = document.getElementById('titulo-modal');
+        const tituloModal = document.getElementById('titulo-modal-lu');
         if (tituloModal) {
             tituloModal.textContent = 'Confirmar eliminación';
         }
 
         // Cargar el modal de confirmación
-        const contenidoModal = document.getElementById('contenido-modal');
+        const contenidoModal = document.getElementById('contenido-modal-lu');
         if (contenidoModal) {
             contenidoModal.innerHTML = `
                 <p>¿Está seguro que desea eliminar este vendedor?</p>
@@ -228,7 +228,7 @@ function abrirModalEliminarVendedor(id) {
         }
 
         // Mostrar el modal
-        const modal = document.getElementById('modal');
+        const modal = document.getElementById('modal-lu');
         if (modal) {
             modal.style.display = 'block';
         }
@@ -240,12 +240,12 @@ function abrirModalEliminarVendedor(id) {
 
 // Función para cerrar modal
 function cerrarModalVendedor() {
-    const modal = document.getElementById('modal');
+    const modal = document.getElementById('modal-lu');
     if (modal) {
         modal.style.display = 'none';
         
         // Limpiar el contenido del modal
-        const contenidoModal = document.getElementById('contenido-modal');
+        const contenidoModal = document.getElementById('contenido-modal-lu');
         if (contenidoModal) {
             contenidoModal.innerHTML = '';
         }
@@ -264,7 +264,7 @@ async function eliminarVendedor(id) {
         
         if (response.ok) {
             // Mostrar mensaje dentro del modal
-            const modalContent = document.getElementById('contenido-modal');
+            const modalContent = document.getElementById('contenido-modal-lu');
             const mensajeDiv = document.createElement('div');
             mensajeDiv.className = 'modal-message success-message';
             mensajeDiv.textContent = 'Vendedor eliminado exitosamente';
@@ -318,7 +318,7 @@ function guardarVendedor(event) {
         })
         .then(() => {
             // Mostrar mensaje dentro del modal
-            const modalContent = document.getElementById('contenido-modal');
+            const modalContent = document.getElementById('contenido-modal-lu');
             const mensajeDiv = document.createElement('div');
             mensajeDiv.className = 'modal-message success-message';
             mensajeDiv.textContent = 'Vendedor guardado exitosamente';

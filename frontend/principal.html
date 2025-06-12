@@ -1,13 +1,14 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sistema de Facturación</title>
     <link rel="stylesheet" href="css/style.css">
+    <!-- <link rel="stylesheet" href="css/facturasModal.css"> -->
+    <link rel="stylesheet" href="css/modalCris.css">
+    <link rel="stylesheet" href="css/modalClienteVendedor.css">
 </head>
-
 <body>
     <header class="header">
         <div class="logo">
@@ -33,14 +34,14 @@
                 <li><a class="nav-link" href="#facturacion"><img src="images/facturacion.png">Facturación</a></li>
                 <li><a class="nav-link" href="#clientes"><img src="images/clientes.png">Clientes</a></li>
                 <li><a class="nav-link" href="#facturas"><img src="images/facturas.png">Facturas</a></li>
-
+                
                 <!-- JEFE DE VENTAS -->
                 <li><a class="nav-link" href="#categorias"><img src="images/categorias.png">Categorías</a></li>
                 <li><a class="nav-link" href="#productos"><img src="images/productos.png">Productos</a></li>
-
+                
                 <!-- ADMINISTRADOR -->
-                <li><a class="nav-link" href="#usuarios"><img src="images/gestionarCuentas.png">Gestionar Usuarios</a></li>
-                <li><a class="nav-link" href="#vendedores"><img src="images/gestionarVendedores.png">GestionarVendedores</a></li>
+                <!-- <li><a class="nav-link" href="#clientes"><img src="images/gestionarCuentas.png">Gestionar Usuarios</a></li> -->
+                <li><a class="nav-link" href="#vendedores"><img src="images/gestionarVendedores.png">Gestionar Vendedores</a></li>
             </ul>
         </nav>
 
@@ -49,23 +50,37 @@
         </div>
     </main>
 
-    <!-- Modales .......................................................-->
-    <!-- <div id="modal-container"></div> -->
+    <!-- Modales -->
+     <!-- Facturas  -->
+    <div id="modal-container"></div>
 
-    <div id="modal" class="modal">
-        <div class="modal-content">
+    <!-- Categorias y productos -->
+    <div id="myModal" class="modal-categorias-productos">
+        <div class="modal-content-categorias-productos">
             <span class="close">&times;</span>
-            <h2 id="titulo-modal"></h2>
-            <div id="contenido-modal" class="contenido-modal">
+            <h2 id="titulo-modal-cris">Título del Modal</h2>
+            <div id="contenido-modal-cris">
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal clientes y vendedores -->
+    <div id="modal-lu" class="modal-lu">
+        <div class="modal-content-lu">
+            <span class="close">&times;</span>
+            <h2 id="titulo-modal-lu"></h2>
+            <div id="contenido-modal-lu" class="contenido-modal-lu">
                 <!-- Aquí se cargará el formulario -->
             </div>
         </div>
     </div>
 
     <!-- Scripts -->
-    <script src="js/principal.js"></script>
+    <script src="js/principal.js"></script>     
     <script src="js/clientes.js"></script>
     <script src="js/vendedores.js"></script>
+    <script src="js/facturas.js"></script>
+    <script src="js/categorias.js"></script>
+    <script src="js/productos.js"></script>
 </body>
-
 </html>

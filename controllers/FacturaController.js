@@ -35,6 +35,14 @@ const FacturaController = {
     } catch (error) {
       res.status(400).json({ mensaje: error.message });
     }
+  },
+  async eliminar(req, res) {
+    try {
+      await FacturaService.eliminarFactura(req.params.id);
+      res.status(204).send();
+    } catch (error) {
+      res.status(404).json({ mensaje: error.message });
+    }
   }
 };
 

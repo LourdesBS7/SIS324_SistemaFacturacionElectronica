@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
-const db = require('./models'); // Importa conexión y modelos
+const db = require('./models');
 require('dotenv').config();
 const path = require('path');
 

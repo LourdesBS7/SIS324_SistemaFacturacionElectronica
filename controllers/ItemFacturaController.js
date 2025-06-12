@@ -28,6 +28,15 @@ const ItemFacturaController = {
     }
   },
 
+  async actualizar(req, res) {
+    try {
+      const item = await ItemFacturaService.actualizarItem(req.params.id, req.body);
+      res.json(item);
+    } catch (error) {
+      res.status(400).json({ mensaje: error.message });
+    }
+  },
+
   async eliminar(req, res) {
     try {
       await ItemFacturaService.eliminarItem(req.params.id);

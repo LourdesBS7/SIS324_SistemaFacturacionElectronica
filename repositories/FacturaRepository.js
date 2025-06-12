@@ -5,6 +5,7 @@ const ItemFactura = require('../models/ItemFactura');
 
 const FacturaRepository = {
   async crear(data) {
+    console.log('Datos de la factura a crear:', data); // Debugging line to check data
     return await Factura.create(data);
   },
 

@@ -23,6 +23,17 @@ const ItemFacturaService = {
     return item;
   },
 
+  async actualizarItem(id, data) {
+    const item = await ItemFacturaRepository.obtenerPorId(id);
+    if (!item) throw new Error('ItemFactura no encontrado');
+
+    const producto = await ProductoRepository.obtenerPorId(data.idProducto);
+    if (!producto) throw new Error('Producto no encontrado');
+
+    // Actualizar el item
+    return await ItemFacturaRepository.actualizar(id, data);
+  },
+
   async eliminarItem(id) {
     const item = await ItemFacturaRepository.obtenerPorId(id);
     if (!item) throw new Error('ItemFactura no encontrado');

@@ -11,7 +11,9 @@ const FacturaService = {
       idVendedor,
       nitEmisor,
       codigoPV,
-      items // array: [{ idProducto, cantidad }]
+      items, // array: [{ idProducto, cantidad }]
+      total,
+      totalImpuestos
     } = data;
 
     // Validaciones básicas
@@ -21,34 +23,34 @@ const FacturaService = {
     const vendedor = await VendedorRepository.obtenerPorId(idVendedor);
     if (!vendedor) throw new Error('Vendedor no encontrado');
 
-    if (!items || items.length === 0) {
-      throw new Error('La factura debe tener al menos un producto');
-    }
+    // if (!items || items.length === 0) {
+    //   throw new Error('La factura debe tener al menos un producto');
+    // }
 
-    // Cálculos
-    let total = 0;
-    let totalImpuestos = 0;
-    const tasaIVA = 0.13;
+    // // Cálculos
+    // let total = 0;
+    // let totalImpuestos = 0;
+    // const tasaIVA = 0.13;
 
-    const itemDetalles = [];
+    // const itemDetalles = [];
 
-    for (const item of items) {
-      const producto = await ProductoRepository.obtenerPorId(item.idProducto);
-      if (!producto) throw new Error(`Producto con ID ${item.idProducto} no encontrado`);
+    // for (const item of items) {
+    //   const producto = await ProductoRepository.obtenerPorId(item.idProducto);
+    //   if (!producto) throw new Error(`Producto con ID ${item.idProducto} no encontrado`);
 
-      const precioUnitario = producto.precioUnitario;
-      const subtotal = precioUnitario * item.cantidad;
-      const impuesto = subtotal * tasaIVA;
+    //   const precioUnitario = producto.precioUnitario;
+    //   const subtotal = precioUnitario * item.cantidad;
+    //   const impuesto = subtotal * tasaIVA;
 
-      total += subtotal;
-      totalImpuestos += impuesto;
+    //   total += subtotal;
+    //   totalImpuestos += impuesto;
 
-      itemDetalles.push({
-        idProducto: item.idProducto,
-        cantidad: item.cantidad,
-        precioUnitario
-      });
-    }
+    //   itemDetalles.push({
+    //     idProducto: item.idProducto,
+    //     cantidad: item.cantidad,
+    //     precioUnitario
+    //   });
+    // }
 
     // Crear factura
     const factura = await FacturaRepository.crear({
@@ -65,12 +67,12 @@ const FacturaService = {
     });
 
     // Crear items de factura
-    for (const item of itemDetalles) {
-      await ItemFacturaRepository.crear({
-        idFactura: factura.idFactura,
-        ...item
-      });
-    }
+    // for (const item of itemDetalles) {
+    //   await ItemFacturaRepository.crear({
+    //     idFactura: factura.idFactura,
+    //     ...item
+    //   });
+    // }
 
     return factura;
   },
@@ -90,6 +92,22 @@ const FacturaService = {
     if (!factura) throw new Error('Factura no encontrada');
 
     return await FacturaRepository.actualizar(id, { estado: 'anulada' });
+  },
+
+  async actualizarFactura(id, data) {
+    const factura = await FacturaRepository.obtenerPorId(id);
+    if (!factura) throw new Error('Factura no encontrada');
+
+    // Validaciones y actualizaciones
+    const updatedFactura = await FacturaRepository.actualizar(id, data);
+    return updatedFactura;
+  },
+
+  async eliminarFactura(id) {
+    const factura = await FacturaRepository.obtenerPorId(id);
+    if (!factura) throw new Error('Factura no encontrada');
+
+    return await FacturaRepository.eliminar(id);
   }
 };
 
